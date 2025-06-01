@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Alumni Listings',
+          'Home',
           style: theme.textTheme.headlineMedium?.copyWith(color: Colors.white),
         ),
         backgroundColor: theme.primaryColor,
