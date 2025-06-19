@@ -48,6 +48,20 @@ class ApiClient {
     );
   }
 
+  /// ✅ New PUT method
+  Future<http.Response> put(
+    String path, {
+    Map<String, String>? headers,
+    Object? body,
+    String? token,
+  }) {
+    return _client.put(
+      _buildUri(path),
+      headers: _buildHeaders(headers, token),
+      body: jsonEncode(body),
+    );
+  }
+
   Map<String, String> _buildHeaders(
     Map<String, String>? customHeaders,
     String? token,

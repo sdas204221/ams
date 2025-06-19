@@ -13,6 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   Future<void> _handleLogin(BuildContext context) async {
     setState(() => _isLoading = true);
@@ -57,9 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 400, // ✅ Keeps it narrow on desktops
-                ),
+                constraints: const BoxConstraints(maxWidth: 400),
                 child: Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -87,9 +86,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 16),
                         TextField(
                           controller: _passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
                             labelText: 'Password',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -105,6 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: _navigateToRegister,
                           child: const Text("Don't have an account? Register"),
                         ),
+                        Text("To reset your password, please contact the admin at sdas204221@gmail.com",textAlign: TextAlign.center,),
                       ],
                     ),
                   ),
@@ -115,10 +127,11 @@ class _LoginScreenState extends State<LoginScreen> {
           if (_isLoading)
             Container(
               color: Colors.black.withOpacity(0.5),
-              child: Center(child: CircularProgressIndicator(
-  color: Colors.brown[700],
-)
-),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.brown[700],
+                ),
+              ),
             ),
         ],
       ),

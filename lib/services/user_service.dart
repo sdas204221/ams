@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:lms/data/models/user_model.dart';
 import 'package:lms/data/repositories/api/user_repository.dart';
 import 'package:lms/data/repositories/db/storage.dart';
@@ -7,6 +8,50 @@ class UserService {
   final Storage storage;
 
   UserService({required this.userRepo, required this.storage});
+
+Future<List<String>?> getAllUsernames() async {
+    final token = storage.getJwt();
+    if (token == null) {
+      print('[UserService] Token is null');
+      return null;
+    }
+
+    final profile = await userRepo.getAllUsernames(token);
+    if (profile != null) {
+      print('[UserService] getAllUsernames invoked');
+    } else {
+      print('[UserService] Failed to fetch profile');
+    }
+    return profile;
+  }
+
+
+  Future<Profile?> updateMyProfile(Profile profile)async{
+    final token = storage.getJwt();
+    if (token == null) {
+      if (kDebugMode) {
+        print('[UserService] Token is null');
+      }
+      return null;
+    }
+    Profile? updatedProfile=await userRepo.updateProfile(profile, token);
+    return updatedProfile;
+  }
+Future<Profile?> getMyProfile() async {
+    final token = storage.getJwt();
+    if (token == null) {
+      print('[UserService] Token is null');
+      return null;
+    }
+
+    final profile = await userRepo.getMyProfile(token);
+    if (profile != null) {
+      print('[UserService] Profile fetched for ${profile.user.username}');
+    } else {
+      print('[UserService] Failed to fetch profile');
+    }
+    return profile;
+  }
 
   Future<Profile?> getProfile(String? username) async {
     final token = storage.getJwt();

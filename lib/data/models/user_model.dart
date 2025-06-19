@@ -64,6 +64,27 @@ class User {
       'password': password,
     };
   }
+
+  User copyWith({
+  int? id,
+  String? username,
+  String? email,
+  List<Role>? roles,
+  bool? isAccountLocked,
+  bool? isEnabled,
+  String? password,
+}) {
+  return User(
+    id: id ?? this.id,
+    username: username ?? this.username,
+    email: email ?? this.email,
+    roles: roles ?? this.roles,
+    isAccountLocked: isAccountLocked ?? this.isAccountLocked,
+    isEnabled: isEnabled ?? this.isEnabled,
+    password: password ?? this.password,
+  );
+}
+
 }
 
 class Profile {
@@ -72,10 +93,12 @@ class Profile {
   final String? jobDetails;
   final String? skills;
   final String? achievements;
+  final String? name;
   final dynamic profilePicture; // Consider replacing with a proper model if needed
   final User user;
 
   Profile({
+    this.name,
     this.id,
     this.education,
     this.jobDetails,
@@ -88,6 +111,7 @@ class Profile {
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       id: json['id'],
+      name: json['name'],
       education: json['education'],
       jobDetails: json['jobDetails'],
       skills: json['skills'],
@@ -100,6 +124,7 @@ class Profile {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'name': name,
       'education': education,
       'jobDetails': jobDetails,
       'skills': skills,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lms/providers/user_provider.dart';
+import 'package:lms/providers/auth_provider.dart';
 import 'package:lms/data/models/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -33,26 +34,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildField(String label, String? value) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-              width: 120,
-              child: Text(
-                "$label:",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Georgia',
-                ),
-              )),
+            width: 120,
+            child: Text(
+              "$label:",
+              style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
           Expanded(
             child: Text(
               value?.trim().isEmpty ?? true ? 'N/A' : value!,
-              style: const TextStyle(
-                fontFamily: 'Georgia',
-              ),
+              style: theme.textTheme.bodyLarge,
             ),
           ),
         ],
@@ -61,8 +59,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildSection(IconData icon, String title, Widget content) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+
     return Card(
-      elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -72,15 +72,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Row(
               children: [
-                Icon(icon, color: Colors.brown.shade700),
+                Icon(icon, color: primary),
                 const SizedBox(width: 8),
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Georgia',
-                    color: Colors.brown.shade700,
+                    color: primary,
                   ),
                 ),
               ],
@@ -94,22 +92,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildRoles(List<Role> roles) {
+    final theme = Theme.of(context);
+    final chipColor = theme.colorScheme.primaryContainer;
+
     return Wrap(
       spacing: 8,
       runSpacing: 4,
       children: roles
           .map(
-            (role) => Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.brown.shade100,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                role.name,
-                style: const TextStyle(fontFamily: 'Georgia'),
-              ),
+            (role) => Chip(
+              label: Text(role.name, style: theme.textTheme.bodyMedium),
+              backgroundColor: chipColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
           )
           .toList(),
@@ -118,8 +112,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final roles = Provider.of<AuthProvider>(context).roles;
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Profile")),
+      appBar: AppBar(
+        title: Text(
+          "Profile",
+          style: theme.textTheme.headlineMedium?.copyWith(color: Colors.white),
+        ),
+        actions: [
+          if (roles.contains('admin') || roles.contains('moderator'))
+            IconButton(
+              icon: const Icon(Icons.edit),
+              tooltip: 'Edit Profile',
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  '/account',
+                  arguments: _profile!.user.username,
+                );
+              },
+            ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _profile == null
@@ -132,26 +148,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Name and email (simple, no card)
                           Center(
                             child: Column(
                               children: [
                                 Text(
+                                  _profile!.name?.trim().isEmpty ?? true
+                                      ? 'Unnamed'
+                                      : _profile!.name!,
+                                  style: theme.textTheme.headlineSmall,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
                                   _profile!.user.username,
-                                  style: const TextStyle(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Georgia',
-                                  ),
+                                  style: theme.textTheme.headlineMedium,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   _profile!.user.email,
-                                  style: TextStyle(
-                                    fontSize: 14,
+                                  style: theme.textTheme.labelLarge?.copyWith(
                                     fontStyle: FontStyle.italic,
                                     color: Colors.grey[700],
-                                    fontFamily: 'Georgia',
                                   ),
                                 ),
                               ],

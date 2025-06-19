@@ -12,14 +12,18 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _educationController = TextEditingController();
   final _jobDetailsController = TextEditingController();
   final _skillsController = TextEditingController();
   final _achievementsController = TextEditingController();
 
+  bool _showPassword = false;
+  bool _showConfirmPassword = false;
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -39,6 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     final profile = Profile(
+      name: _nameController.text.trim(),
       user: user,
       education: _educationController.text.trim(),
       jobDetails: _jobDetailsController.text.trim(),
@@ -105,13 +110,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 12),
                       ],
 
+                      _buildTextField('Name', _nameController,
+                          validator: (v) => v == null || v.isEmpty ? 'Enter your name' : null),
                       _buildTextField('Username', _usernameController,
                           validator: (v) => v == null || v.isEmpty ? 'Enter username' : null),
                       _buildTextField('Email', _emailController,
                           validator: (v) => v == null || !v.contains('@') ? 'Enter valid email' : null),
-                      _buildTextField('Password', _passwordController,
-                          obscure: true,
-                          validator: (v) => v == null || v.length < 6 ? 'Password too short' : null),
+
+                      _buildPasswordField('Password', _passwordController, _showPassword, () {
+                        setState(() => _showPassword = !_showPassword);
+                      }, validator: (v) => v == null || v.length < 6 ? 'Password too short' : null),
+
+                      _buildPasswordField('Confirm Password', _confirmPasswordController, _showConfirmPassword, () {
+                        setState(() => _showConfirmPassword = !_showConfirmPassword);
+                      }, validator: (v) {
+                        if (v != _passwordController.text) return 'Passwords do not match';
+                        return null;
+                      }),
+
                       _buildTextField('Education', _educationController),
                       _buildTextField('Job Details', _jobDetailsController),
                       _buildTextField('Skills (comma-separated)', _skillsController),
@@ -125,7 +141,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               onPressed: _register,
                               style: ElevatedButton.styleFrom(
                                 minimumSize: const Size.fromHeight(48),
-                                backgroundColor: theme.primaryColor,
+                                //backgroundColor: theme.primaryColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -160,6 +176,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
         validator: validator,
         decoration: InputDecoration(
           labelText: label,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField(
+    String label,
+    TextEditingController controller,
+    bool isVisible,
+    VoidCallback toggleVisibility, {
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        obscureText: !isVisible,
+        validator: validator,
+        decoration: InputDecoration(
+          labelText: label,
+          suffixIcon: IconButton(
+            icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off),
+            onPressed: toggleVisibility,
+          ),
         ),
       ),
     );

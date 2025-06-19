@@ -16,7 +16,8 @@ class AuthService {
     await storage.saveJwt(loginResponse["jwt"]);
     await storage.saveUsername(username);
     await storage.saveRoles(loginResponse["roles"]);
-    return true;
+    return loginResponse["roles"].contains('user');
+   // return false;
     }
     catch(e){
       return false;

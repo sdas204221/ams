@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lms/screens/my_profile_screen.dart';
 import 'package:lms/screens/register_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
   '/admin/approve-users': (context) => const ApproveUsersScreen(),
   '/admin/assign-roles': (context) => const AssignRolesScreen(),
   '/register': (context) => const RegisterScreen(),
+  '/account':(context)=>MyProfileScreen()
 }
 ,
     );

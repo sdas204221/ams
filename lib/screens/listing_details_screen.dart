@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lms/data/models/listing_model.dart';
@@ -11,9 +12,10 @@ class ListingDetailsScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Listing;
 
     final dateFormat = DateFormat('dd MMM yyyy, hh:mm a');
-    final approvalDateStr = listing.approvalDate != null
-        ? dateFormat.format(listing.approvalDate!)
-        : 'Pending Approval';
+    final approvalDateStr =
+        listing.approvalDate != null
+            ? dateFormat.format(listing.approvalDate!)
+            : 'Pending Approval';
 
     return Scaffold(
       appBar: AppBar(
@@ -25,7 +27,7 @@ class ListingDetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
+            constraints: const BoxConstraints(maxWidth: 900),
             child: Card(
               elevation: Theme.of(context).cardTheme.elevation,
               shape: Theme.of(context).cardTheme.shape,
@@ -57,9 +59,9 @@ class ListingDetailsScreen extends StatelessWidget {
                       child: Text(
                         listing.username,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.blue.shade700,
-                              decoration: TextDecoration.underline,
-                            ),
+                          color: Colors.blue.shade700,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
 
@@ -87,20 +89,23 @@ class ListingDetailsScreen extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       runSpacing: 4,
-                      children: listing.types
-                          .map(
-                            (type) => Chip(
-                              label: Text(
-                                type[0].toUpperCase() + type.substring(1),
-                                style: const TextStyle(fontFamily: 'Georgia'),
-                              ),
-                              backgroundColor: Colors.brown.shade100,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      children:
+                          listing.types
+                              .map(
+                                (type) => Chip(
+                                  label: Text(
+                                    type[0].toUpperCase() + type.substring(1),
+                                    style: const TextStyle(
+                                      fontFamily: 'Georgia',
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.brown.shade100,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                     ),
 
                     const SizedBox(height: 24),
@@ -114,10 +119,57 @@ class ListingDetailsScreen extends StatelessWidget {
                     Text(
                       approvalDateStr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontStyle: FontStyle.italic,
-                            color: Colors.brown.shade700,
-                          ),
+                        fontStyle: FontStyle.italic,
+                        color: Colors.brown.shade700,
+                      ),
                     ),
+
+                    // Images Section
+                    if (listing.files != null && listing.files!.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      Divider(color: Theme.of(context).dividerTheme.color),
+                      Text(
+                        'Attached Images:',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+
+                      ...listing.files!.map(
+                        (file) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                file.filename,
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(fontStyle: FontStyle.italic),
+                              ),
+                              const SizedBox(height: 6),
+                              Center(
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 500, // Max width limit
+                                    maxHeight:
+                                        500, // Max height limit (adjust as needed)
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.memory(
+                                      file.bytes,
+                                      fit: BoxFit.contain,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Text('Error loading image'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

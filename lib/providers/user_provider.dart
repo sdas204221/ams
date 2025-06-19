@@ -7,11 +7,20 @@ class UserProvider with ChangeNotifier {
 
   Profile? _currentProfile;
   List<Profile>? _profiles;
+  List<String>? _usernames;
 
   Profile? get currentProfile => _currentProfile;
-
+  List<String>? get usernames => _usernames;
   UserProvider({required this.userService});
-
+  Future<List<String>?> getAllUsernames() async{
+    _usernames ??= await userService.getAllUsernames();
+    return usernames;
+  }
+Future<Profile?> getMyProfile() async {
+    _currentProfile = await userService.getMyProfile();
+    notifyListeners();
+    return _currentProfile;
+  }
   Future<Profile?> getProfile(String username) async {
     _currentProfile = await userService.getProfile(username);
     notifyListeners();
@@ -33,4 +42,8 @@ class UserProvider with ChangeNotifier {
     final result = await userService.assignRoles(username, roles);
     return result;
   }
+  Future<Profile?> updateProfile(Profile profile) async{
+  return userService.updateMyProfile(profile);
+  }
+  
 }

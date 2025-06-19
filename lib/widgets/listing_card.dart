@@ -16,17 +16,18 @@ class ListingCard extends StatelessWidget {
 
     final theme = Theme.of(context);
 
-    if (listing.types.length > 1) {
-      return multipleColor;
-    } else if (listing.types.contains('job')) {
-      return jobColor;
-    } else if (listing.types.contains('post')) {
-      return postColor;
-    } else if (listing.types.contains('event')) {
-      return eventColor;
-    } else {
-      return theme.cardColor;
-    }
+    // if (listing.types.length > 1) {
+    //   return multipleColor;
+    // } else if (listing.types.contains('job')) {
+    //   return jobColor;
+    // } else if (listing.types.contains('post')) {
+    //   return postColor;
+    // } else if (listing.types.contains('event')) {
+    //   return eventColor;
+    // } else {
+    //   return theme.cardColor;
+    // }
+    return theme.cardColor;
   }
 
   String _getPrimaryTypeLabel() {
@@ -51,7 +52,7 @@ class ListingCard extends StatelessWidget {
     // Use dark brown for text, but lighten text color on darker card backgrounds.
     final cardColor = _getCardColor(context);
     final isDarkBackground = cardColor.computeLuminance() < 0.5;
-    final textColor = isDarkBackground ? Colors.white : theme.primaryColorDark;
+    final textColor = isDarkBackground ? Colors.white :theme.primaryColor;
 
     return Card(
       color: cardColor,
